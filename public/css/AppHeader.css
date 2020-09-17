@@ -1,0 +1,40 @@
+#headerWrap {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    position: relative;
+    box-sizing: border-box;
+    height: 0px;
+    width: 100%;
+    height: 100px;
+    /* background-color: red; */
+    z-index: 20;
+}
+
+#headerWrap button {
+    position: absolute;
+    top: 80px;
+    width: 200px;
+    height: 50px;
+    border-radius: 7px;
+    border: 1px solid black;
+    background-color: white;
+}
+
+#upload {
+    left: 700px;
+}
+
+#search {
+    left: 1000px;
+}
+
+#exportToFile {
+    left: 1300px;
+}
+
+/* <div id="headerWrap">
+                <button id="upload"></button>
+                <button id="search"></button>
+                <button id="exportToFile"></button>
+            </div> */

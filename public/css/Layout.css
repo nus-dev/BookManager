@@ -1,0 +1,118 @@
+#appHeader {
+    overflow: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    width: 100%;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    background-color: red;
+    box-sizing: border-box;
+    color: rgba(37, 40, 47, 0.65);
+    height: 0px;
+}
+
+#mainSection {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    top: 0px;
+    min-height: 100%;
+}
+
+#bookInfoGrid {
+    position: absolute;
+    top: 30px;
+    margin-left: 15px;
+    width: 964px;
+    height: 490px;
+    border: 1px solid black;
+    overflow: auto;
+}
+
+#bookDetail {
+    position: absolute;
+    top: 30px;
+    left: 994px;
+    margin-right: 50px;
+    width: 490px;
+    height: 490px;
+}
+
+#bookDetail select {
+    width: 300x;
+    height: 100%;
+}
+
+#bookDetail tr, #bookDetail td {
+    height: 32px;
+}
+
+#bookDetail tr.large, #bookDetail td.large {
+    height: 96px;
+}
+
+#manager, #logistics {
+    position: absolute;
+    width: 300px;
+    height: 150px;
+    top: 100px;
+    margin-left: 20px;
+    margin-right: 20px;
+    width: 1499px;
+    height: 700px;
+    /* border: 1px solid black; */
+}
+
+#btnManage, #btnLogistics {
+    position: absolute;
+    left: 0px;
+    width: 120px;
+    top: -40px;
+    height: 40px;
+    border-radius: 5px 5px 0 0;
+    border: 1px solid black;
+    border-bottom: 0;
+    background-color: white;
+}
+
+#managerPasteDiv, #logisticsPasteDiv {
+    position: absolute;
+    left: 0px;
+    width: 118px;
+    height: 5px;
+    top: -3px;
+    background-color: white;
+    border: 0;
+}
+
+#logisticsPasteDiv {
+    left: 120px;
+}
+
+#btnLogistics {
+    left: 120px;
+    border-left: 0;
+}
+
+#btnManage.inactive, #btnLogistics.inactive {
+    background-color: rgb(240, 240, 240);
+}
+
+#btnManage:focus {
+    border: 0;
+}
+
+#manageMain, #logisticsMain{
+    border: 1px solid black;
+    position: absolute;
+    width: 300px;
+    height: 150px;
+    margin-right: 40px;
+    width: 1499px;
+    height: 550px;    
+    z-index: 5;
+}

@@ -1,0 +1,15 @@
+.bookLogisticsGridTableHeader {
+    height: 22px;
+    text-align: center;
+}
+
+#bookLogisticsGridTableHeaderDiv {
+    position: absolute;
+    border: 0;
+    background-color: white;
+    width: 948px;
+    height: 22px;
+    left: 16px;
+    top: 31px;
+    z-index: 10;
+}

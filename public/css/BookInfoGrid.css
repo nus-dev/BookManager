@@ -1,0 +1,60 @@
+/* #bookInfoGrid {
+    position: absolute;
+    top: 100px;
+    margin-left: 50px;
+    width: 500px;
+    height: 500px;
+    border: 1px solid black;
+    overflow: auto;
+} */
+
+#bookInfoGridTable {
+    position: absolute;
+    top: 22px;
+    /* overflow-y: auto; */
+}
+
+.bookInfoGridTableHeader {
+    height: 22px;
+    text-align: center;
+}
+
+#bookInfoGridTableHeaderDiv {
+    position: absolute;
+    border: 0;
+    background-color: white;
+    width: 948px;
+    height: 22px;
+    left: 16px;
+    top: 31px;
+    z-index: 10;
+}
+
+/* #bookInfoGrid tr, #bookInfoGrid td {
+    border: 1px solid black;
+    overflow: hidden;
+} */
+
+td.bookId {
+    width: 60px;
+}
+
+td.gubun {
+    width: 50px;
+}
+
+td.bookName {
+    width: 410px;
+}
+
+td.writer {
+    width: 140px;
+}
+
+td.publisher {
+    width: 200px;  
+}
+
+td.sellState {
+    width: 80px; 
+}
