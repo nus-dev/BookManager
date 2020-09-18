@@ -8,13 +8,16 @@ let main_window: BrowserWindow
 function create_window() {
     main_window = new BrowserWindow({
         // 이것들은 제가 사용하는 설정이니 각자 알아서 설정 하십시오.
-        alwaysOnTop: true,
+        alwaysOnTop: false,
         center: true,
-        fullscreen: true,
+        fullscreen: false,
         kiosk: !isDev,
         resizable: false,
-        width: 1541,
-        height: 900,
+        minWidth: 1550,
+        zoomToPageWidth: false,
+        maximizable: true,
+        width: 1920,
+        height: 1080,
         webPreferences: {
             // 2.
             // 웹 애플리케이션을 데스크탑으로 모양만 바꾸려면 안 해도 되지만,
@@ -33,7 +36,7 @@ function create_window() {
     // } else {
     //     // 프로덕션 환경에서는 패키지 내부 리소스에 접근
         const htmlPath: string = path.join(__dirname, '../../index.html');
-        main_window.webContents.openDevTools();
+        // main_window.webContents.openDevTools();
         main_window.loadFile(htmlPath);
     // }
 

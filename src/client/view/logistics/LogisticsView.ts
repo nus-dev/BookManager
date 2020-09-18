@@ -1,13 +1,22 @@
+import { BookLogistics } from "../../model/BookLogistics";
 import { BookModel } from "../../model/BookModel"
-import { View, ViewStatus } from "../View"
+import { View, ViewState } from "../View"
+import { LogisticsGridView, LogisticsGridViewStatus } from "./LogisticsGridView";
 
 export class BookLogisticsView extends View<BookLogisticsViewStatus>{
     private onSelectHandlers: Array<any> = [];
+    private logisticsGridView: LogisticsGridView;
+
+    constructor(id: string) {
+        super(id);
+
+        this.logisticsGridView = new LogisticsGridView('logisticsGridTable');
+    }
     
     public render(): void {
-        this.status.visible ? this.element.classList.remove('hide') : this.element.classList.add('hide');
-        if (this.status.visible) {
-            // this.bookInfoGridView.setStatus(new BookInfoGridViewStatus(this.status.books));
+        this.state.visible ? this.element.classList.remove('hide') : this.element.classList.add('hide');
+        if (this.state.visible) {
+            this.logisticsGridView.setState(new LogisticsGridViewStatus(this.state.books, this.state.logistics));
         }
     }
 
@@ -20,8 +29,8 @@ export class BookLogisticsView extends View<BookLogisticsViewStatus>{
     }
 }
 
-export class BookLogisticsViewStatus extends ViewStatus {
-    constructor(public visible: boolean, public books: Array<BookModel>) {
+export class BookLogisticsViewStatus extends ViewState {
+    constructor(public visible: boolean, public books: Array<BookModel>, public logistics: Array<BookLogistics>) {
         super();
     }
 }

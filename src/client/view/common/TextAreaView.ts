@@ -1,10 +1,26 @@
-import {ViewStatus, View} from "../View";
+import {ViewState, View} from "../View";
 
 export class TextAreaView extends View<TextAreaViewStatus> {
     public element: HTMLTextAreaElement;
 
+    private onChangeHandlers: Array<any> = [];
+    constructor(id: string) {
+        super(id);
+        
+        this.element.onchange = () => this.onChange();
+    }
+
+    private onChange(): void {
+        const value = this.element.value;
+        this.setState(new TextAreaViewStatus(value));
+    }
+
+    public setOnChange(handler: (value: string) => void): void {
+        this.onChangeHandlers.push(handler);
+    }
+
     public render(): void {
-        this.element.value = this.status.text || '';
+        this.element.value = this.state.text || '';
     }
 
     public getText(): string {
@@ -12,7 +28,7 @@ export class TextAreaView extends View<TextAreaViewStatus> {
     }
 }
 
-export class TextAreaViewStatus extends ViewStatus {
+export class TextAreaViewStatus extends ViewState {
     constructor(public text: string) {
         super();
     }

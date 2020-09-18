@@ -1,5 +1,5 @@
 import { BookModel } from "../../model/BookModel";
-import { View, ViewStatus } from "../View";
+import { View, ViewState } from "../View";
 import { BookInfoGridView, BookInfoGridViewStatus } from "./BookInfoGridView";
 
 export class BookManageView extends View<BookManageViewStatus> {
@@ -10,14 +10,14 @@ export class BookManageView extends View<BookManageViewStatus> {
     constructor(id: string) {
         super(id);
 
-        this.bookInfoGridView = new BookInfoGridView('bookInfoGridTable');
+        this.bookInfoGridView = new BookInfoGridView('bookInfoGrid');
         this.bookInfoGridView.setOnSelect((book: BookModel) => this.onSelect(book));
     }
     
     public render(): void {
-        this.status.visible ? this.element.classList.remove('hide') : this.element.classList.add('hide');
-        if (this.status.visible) {
-            this.bookInfoGridView.setStatus(new BookInfoGridViewStatus(this.status.books));
+        this.state.visible ? this.element.classList.remove('hide') : this.element.classList.add('hide');
+        if (this.state.visible) {
+            this.bookInfoGridView.setState(new BookInfoGridViewStatus(this.state.books));
         }
     }
     
@@ -30,7 +30,7 @@ export class BookManageView extends View<BookManageViewStatus> {
     }
 }
 
-export class BookManageViewStatus extends ViewStatus {
+export class BookManageViewStatus extends ViewState {
     constructor(public visible: boolean, public books: Array<BookModel>) {
         super();
     }

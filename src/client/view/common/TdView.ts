@@ -1,10 +1,10 @@
-import {ViewStatus, View} from "../View";
+import {ViewState, View} from "../View";
 
 export class TdView extends View<TdViewStatus> {
     public element: HTMLTableDataCellElement;
 
     public render(): void {
-        this.element.textContent = this.status.text;
+        this.element.textContent = this.state.text;
     }
 
     protected createElement(): HTMLElement {
@@ -12,7 +12,7 @@ export class TdView extends View<TdViewStatus> {
     }
 }
 
-export class TdViewStatus extends ViewStatus {
+export class TdViewStatus extends ViewState {
     constructor(public text: string) {
         super();
     }

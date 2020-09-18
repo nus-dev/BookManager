@@ -1,4 +1,4 @@
-import {View, ViewStatus} from "../View";
+import {View, ViewState} from "../View";
 
 export class SelectView extends View<SelectViewStatus> {
     public element: HTMLSelectElement;
@@ -21,9 +21,13 @@ export class SelectView extends View<SelectViewStatus> {
     public setOnChange(handler: (value: string) => void): void {
         this.onChangeHandlers.push(handler);
     }
+
+    public getValue(): string {
+        return this.element.value;
+    }
 }
 
-export class SelectViewStatus extends ViewStatus {
+export class SelectViewStatus extends ViewState {
     // public isChanged(status: ViewStatus): boolean {
     //     return super.isChanged(status) && true;
     // }

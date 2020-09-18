@@ -1,4 +1,4 @@
-import { View, ViewStatus } from "../View";
+import { View, ViewState } from "../View";
 
 export class ButtonView extends View<ButtonViewStatus> {
     private onClickHandlers: Array<any> = [];
@@ -6,10 +6,11 @@ export class ButtonView extends View<ButtonViewStatus> {
     constructor(id: string) {
         super(id);
 
-        this.element.onclick = (ev: MouseEvent) => this.onClick(ev);
+        this.element.onclick = (ev) => this.onClick(ev);
     }
+
     public render(): void {
-        this.status.active ? this.element.classList.remove('inactive') : this.element.classList.add('inactive');
+        this.state.active ? this.element.classList.remove('inactive') : this.element.classList.add('inactive');
     }
 
     private onClick(ev: MouseEvent): void {
@@ -21,7 +22,7 @@ export class ButtonView extends View<ButtonViewStatus> {
     }
 }
 
-export class ButtonViewStatus extends ViewStatus {
+export class ButtonViewStatus extends ViewState {
     constructor(public active: boolean) {
         super();
     }

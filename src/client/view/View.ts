@@ -1,6 +1,6 @@
-export abstract class View<VIEWSTATUS extends ViewStatus> {
+export abstract class View<VIEWSTATE extends ViewState> {
     public element: HTMLElement;
-    protected status: VIEWSTATUS;
+    protected state: VIEWSTATE;
 
     constructor(id: string) {
         this.element = document.getElementById(id);
@@ -13,25 +13,25 @@ export abstract class View<VIEWSTATUS extends ViewStatus> {
         return null;
     }
 
-    public setStatus(status: VIEWSTATUS): void {
-        if (!this.status || this.status.isChanged(status)) {
-            this.status = status;
+    public setState(state: VIEWSTATE): void {
+        if (!this.state || this.state.isChanged(state)) {
+            this.state = state;
             this.render();
-            console.log('render');
+            // console.log('render');
         } else {
-            this.status = status;
+            this.state = state;
         }
     }
 
-    public getStatus(): VIEWSTATUS {
-        return this.status;
+    public getState(): VIEWSTATE {
+        return this.state;
     }
 
     protected abstract render(): void;
 }
 
-export abstract class ViewStatus {
-    public isChanged(status: ViewStatus): boolean {
+export abstract class ViewState {
+    public isChanged(state: ViewState): boolean {
         return true;
     }
 }

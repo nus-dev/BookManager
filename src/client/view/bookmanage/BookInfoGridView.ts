@@ -1,29 +1,75 @@
-import {View, ViewStatus} from "../View";
+import {View, ViewState} from "../View";
 import {BookModel} from "../../model/BookModel";
-import {BookInfoView, BookInfoViewStatus} from "./BookInfoView";
+import Grid from 'tui-grid';
 
 export class BookInfoGridView extends View<BookInfoGridViewStatus> {
-    public element: HTMLTableRowElement;
-    private bookInfoViews: Array<BookInfoView> = [];
+    private gridInstance: Grid;
     private onSelectHandlers: Array<any> = [];
+
     constructor(id: string) {
         super(id);
+
+        this.gridInstance = new Grid({
+            el: this.element,
+            bodyHeight: 745,
+            columns: [
+                {
+                    header: '책ID',
+                    name: 'id',
+                    width: 60
+                },
+                {
+                    header: '구분',
+                    name: 'gubun',
+                    width: 50
+                },
+                {
+                    header: '도서명',
+                    name: 'bookName',
+                    width: 410
+                },
+                {
+                    header: '저자명',
+                    name: 'writer',
+                    width: 140
+                },
+                {
+                    header: '출판사',
+                    name: 'publisher',
+                    width: 200
+                },
+                {
+                    header: '판매상태',
+                    name: 'sellState',
+                    width: 80
+                },
+            ],
+            rowHeight: 40
+        });
+
+        this.gridInstance.on('focusChange', ev => {
+            const rowKey: number = (ev as any).rowKey;
+            this.onSelect(this.state.books[rowKey]);
+        });
     }
     
     public render(): void {
-        for (let i = 0; i < this.status.books.length; i++) {
-            if (!this.bookInfoViews[i]) {
-                this.bookInfoViews.push(new BookInfoView(null));
-                this.element.appendChild(this.bookInfoViews[i].element);
-                this.bookInfoViews[i].setOnClick((book: BookModel) => this.onSelect(book));
+        this.gridInstance.resetData(this.state.books.map((book: BookModel) => {
+            return {
+                id: book.순번,
+                gubun: book.구분1,
+                bookName: book.도서명,
+                writer: book.저자명,
+                publisher: book.출판사,
+                sellState: book.판매상태
             }
-
-            this.bookInfoViews[i].setStatus(new BookInfoViewStatus(this.status.books[i]));
-        }
-
-        while (this.element.childElementCount > this.status.books.length) {
-            this.element.removeChild(this.element.lastChild);
-        }
+        }), {
+            sortState: {
+                ascending: true,
+                columnName: 'id',
+                multiple: false
+            }
+        });
     }
 
     private onSelect(book: BookModel): void {
@@ -35,7 +81,7 @@ export class BookInfoGridView extends View<BookInfoGridViewStatus> {
     }
 }
 
-export class BookInfoGridViewStatus extends ViewStatus {
+export class BookInfoGridViewStatus extends ViewState {
     constructor(public books: Array<BookModel>) {
         super();
     }

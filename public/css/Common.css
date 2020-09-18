@@ -9,10 +9,13 @@ table {
     border-collapse: collapse;
 }
 
-tr, td {
+/* #bookDetail tr, #bookDetail td {
     border: 1px solid black;
     overflow: hidden;
-}
+
+    word-break: break-all;
+    table-layout: fixed;
+} */
 
 /* td input, td textarea {
     border: 1;

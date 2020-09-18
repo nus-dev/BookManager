@@ -10,13 +10,35 @@
         <link rel="stylesheet" href="./public/css/BookDetail.css" type="text/css">
         <link rel="stylesheet" href="./public/css/BookInfoGrid.css" type="text/css">
         <link rel="stylesheet" href="./public/css/BookLogistics.css" type="text/css">
+        <link rel="stylesheet" href="./public/css/Logistics.css" type="text/css">
+        <link rel="stylesheet" href="./public/css/ToastUI.css" type="text/css">
     </head>
     <body>
         <header id="appHeader">
             <div id="headerWrap">
                 <button id="upload">대용량 업로드</button>
-                <button id="search">도서 검색</button>
+                <button id="openSearchPopup">도서 검색</button>
                 <button id="exportToFile">파일로 저장</button>
+                <div id="searchPopup" class="hide">
+                    <div id="popupBackgroundDiv"></div>
+                    <div id="defaultSearch">
+                        <select id="selectSearchTarget">
+                            <option value="책ID">책ID</option>
+                            <option value="도서명">도서명</option>
+                            <option value="저자명">저자명</option>
+                            <option value="출판사">출판사</option>
+                            <option value="판매상태">판매상태</option>
+                        </select>
+                        <input id="inputSearchKeyword" type="text" placeholder="검색어를 입력하세요"></input>
+                        <button id="btnSearch">검색</button>
+                    </div>
+                    <div id="expandExtendSearch">
+                        <button id="btnExpandExtendSearch"></button>
+                    </div>
+                    <div id="divExtendSearch">
+                        
+                    </div>
+                </div>
             </div>
         </header>
         <div id="mainSection">
@@ -24,7 +46,7 @@
                 <button id="btnManage">도서관리</button>
                 <div id="manageMain">
                     <div id="managerPasteDiv"></div>
-                    <div id="bookInfoGridTableHeaderDiv">
+                    <!-- <div id="bookInfoGridTableHeaderDiv">
                         <table class="bookInfoGridTableHeader">
                             <tr class="bookInfoGridTableHeader">
                                 <td class="bookId">책ID</td>
@@ -35,14 +57,14 @@
                                 <td class="sellState">판매상태</td>
                             </tr>
                         </table>
-                    </div>
+                    </div> -->
                     <div id="bookInfoGrid">
-                        <table id="bookInfoGridTable" border="1">
-                        </table>
+                        <!-- <table id="bookInfoGridTable" border="1">
+                        </table> -->
                     </div>
                     <div id="bookDetail">
-                        <table>
-                            <tr>
+                        <!-- <table> -->
+                            <!-- <tr>
                                 <td colspan="2">
                                     <textarea type="text" id="bookId" placeholder="책ID"></textarea>
                                 </td>
@@ -175,8 +197,8 @@
                                 <td colspan="2">
                                     <button id="btnBookDetailMetaUpdate">항목 수정</button>
                                 </td>
-                            </tr>
-                        </table>
+                            </tr> -->
+                        <!-- </table> -->
                     </div>
                 </div>
             </div>
@@ -194,6 +216,10 @@
                                 <td class="publisher">출판사</td>
                                 <td class="sellState">판매상태</td>
                             </tr>
+                        </table>
+                    </div>
+                    <div id="logisticsGrid">
+                        <table id="logisticsGridTable" border="1">
                         </table>
                     </div>
                 </div>

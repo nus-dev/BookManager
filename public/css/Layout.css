@@ -23,23 +23,13 @@
     min-height: 100%;
 }
 
-#bookInfoGrid {
-    position: absolute;
-    top: 30px;
-    margin-left: 15px;
-    width: 964px;
-    height: 490px;
-    border: 1px solid black;
-    overflow: auto;
-}
-
 #bookDetail {
     position: absolute;
     top: 30px;
     left: 994px;
     margin-right: 50px;
     width: 490px;
-    height: 490px;
+    height: 816px;
 }
 
 #bookDetail select {
@@ -47,9 +37,9 @@
     height: 100%;
 }
 
-#bookDetail tr, #bookDetail td {
+/* #bookDetail tr, #bookDetail td {
     height: 32px;
-}
+} */
 
 #bookDetail tr.large, #bookDetail td.large {
     height: 96px;
@@ -63,7 +53,7 @@
     margin-left: 20px;
     margin-right: 20px;
     width: 1499px;
-    height: 700px;
+    height: 870px;
     /* border: 1px solid black; */
 }
 
@@ -109,10 +99,8 @@
 #manageMain, #logisticsMain{
     border: 1px solid black;
     position: absolute;
-    width: 300px;
-    height: 150px;
     margin-right: 40px;
     width: 1499px;
-    height: 550px;    
+    height: 840px;    
     z-index: 5;
 }
