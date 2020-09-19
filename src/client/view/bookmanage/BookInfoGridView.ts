@@ -10,6 +10,9 @@ export class BookInfoGridView extends View<BookInfoGridViewStatus> {
         super(id);
 
         this.gridInstance = new Grid({
+            onGridMounted: () => console.log('onGridMounted'),
+            onGridUpdated: () => console.log('onGridUpdated'),
+            onGridBeforeDestroy: () => console.log('onGridBeforeDestroy'),
             el: this.element,
             bodyHeight: 745,
             columns: [

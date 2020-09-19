@@ -9,6 +9,10 @@ export class ButtonView extends View<ButtonViewStatus> {
         this.element.onclick = (ev) => this.onClick(ev);
     }
 
+    public createElement(): HTMLButtonElement {
+        return document.createElement('button');
+    }
+
     public render(): void {
         this.state.active ? this.element.classList.remove('inactive') : this.element.classList.add('inactive');
     }

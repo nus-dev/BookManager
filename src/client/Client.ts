@@ -4,6 +4,7 @@ import { BookManagerVC } from "./vc/BookManagerVC";
 import { BookInfoGridView } from "./view/bookmanage/BookInfoGridView";
 import * as path from 'path';
 import BookLogisticsDC from "./dc/BookLogisticsDC";
+import ExcelAgent from "./agent/ExcelAgent";
 
 class Client {
     constructor() {
@@ -20,6 +21,8 @@ class Client {
         BookLogisticsDC.loadFromJson(path.join(__dirname, '../../testData/BookData.json'));
         
         new BookManagerVC();
+
+        ExcelAgent.readExcelFile('C:/Users/JSONG/Documents/BookManager/public/도서정보_MH_서식변경.xlsx').then(data => console.log(data));
     }
 }
 

@@ -2,6 +2,54 @@ import {BookModel} from "../../model/BookModel";
 import {TextAreaView, TextAreaViewStatus} from "../common/TextAreaView";
 import {View, ViewState} from "../View";
 import Grid from 'tui-grid';
+import {CellRendererProps} from 'tui-grid/types/renderer';
+import { ButtonView } from "../common/ButtonView";
+
+class RadioRenderer {
+    private el: HTMLDivElement;
+
+    constructor(props: CellRendererProps) {
+        const option = props.columnInfo.renderer.options;
+        const el = document.createElement('div');
+        el.appendChild(this.createInputElement(option.name, 'O', false));
+        el.appendChild(this.createInputElement(option.name, 'X', false));
+
+        el.addEventListener('mousedown', (ev) => {
+            ev.stopPropagation();
+        });
+
+        el.addEventListener('change', () => {
+            const value = (this.el.querySelector(`input[name=${option.name}]:checked`) as any).value;
+            // option.onChange(value);
+        });
+
+        this.el = el;
+        this.render(props);
+    }
+
+    private createInputElement(name: string, value: string, checked: boolean): HTMLLabelElement {
+        const labelElement = document.createElement('label');
+        labelElement.textContent = value;
+        const element = document.createElement('input');
+        labelElement.appendChild(element);
+        element.type = 'radio';
+        element.name = name;
+        element.checked = checked;
+        element.value = value;
+        return labelElement;
+    }
+
+    getElement() {
+        return this.el;
+    }
+
+    render(props: CellRendererProps) {
+        const value = props.grid.getValue(props.rowKey, props.columnInfo.name);
+        console.log(value);
+        // (this.el.querySelector('input[name=완결]:checked') as any).value
+        // this.el.value = String(props.value);
+    }
+}
 
 export class BookDetailView extends View<BookDetailViewStatus> {
     private bookMainInfoGrid: Grid;
@@ -14,22 +62,8 @@ export class BookDetailView extends View<BookDetailViewStatus> {
     private bookPreviewInfoGrid: Grid;
     private bookOpenInfoGrid: Grid;
     private bookSellStatusInfoGrid: Grid;
-    
-    // private bookIdView: TextAreaView;
-    // private isbnView: TextAreaView;
-    // private totalCountView: TextAreaView;
-    // private freeCountView: TextAreaView;
-    // private bookNameView: TextAreaView;
-    // private writerNameView: TextAreaView;
-    // private originPriceView: TextAreaView;
-    // private sellPriceView: TextAreaView;
-    // private lendPriceView: TextAreaView;
-    // private publisherView: TextAreaView;
-    // private copyrightView: TextAreaView;
-    // private bookInfoView: TextAreaView;
-    // private writerInfoView: TextAreaView;
-    // private previewView: TextAreaView;
-    // private keywordView: TextAreaView;
+
+    private btnSave: ButtonView;
 
     constructor(id: string) {
         super(id);
@@ -111,14 +145,27 @@ export class BookDetailView extends View<BookDetailViewStatus> {
                 name: 'finish',
                 header: '완결',
                 width: 118,
-                editor: 'text',
-                align: 'center'
+                align: 'center',
+                renderer: {
+                    type: RadioRenderer,
+                    options: {
+                        name: '완결',
+                        onChange: (value: string) => this.onChangeBook완결(value)
+                    }
+                }
             }, {
                 name: 'adult',
                 header: '성인',
                 width: 118,
                 editor: 'text',
-                align: 'center'
+                align: 'center',
+                renderer: {
+                    type: RadioRenderer,
+                    options: {
+                        name: '성인',
+                        onChange: (value: string) => this.onChangeBook성인(value)
+                    }
+                }
             }],
             header: {
                 height: 24
@@ -141,7 +188,7 @@ export class BookDetailView extends View<BookDetailViewStatus> {
                 whiteSpace: 'normal',
                 align: 'center'
             }, {
-                name: 'startData',
+                name: 'startDate',
                 header: '발행일',
                 width: 118,
                 editor: 'datePicker'
@@ -149,8 +196,14 @@ export class BookDetailView extends View<BookDetailViewStatus> {
                 name: 'lendable',
                 header: '대여여부',
                 width: 118,
-                editor: 'text',
-                align: 'center'
+                align: 'center',
+                renderer: {
+                    type: RadioRenderer,
+                    options: {
+                        name: '대여',
+                        onChange: (value: string) => this.onChangeBook대여여부(value)
+                    }
+                }
             }],
             header: {
                 height: 24
@@ -302,8 +355,14 @@ export class BookDetailView extends View<BookDetailViewStatus> {
             columns: [{
                 name: 'sellState',
                 header: '판매상태',
-                editor: 'text',
-                align: 'center'
+                align: 'center',
+                renderer: {
+                    type: RadioRenderer,
+                    options: {
+                        name: '판매상태',
+                        onChange: (value: string) => this.onChangeBook판매상태(value)
+                    }
+                }
             }, {
                 name: 'endDate2',
                 header: '중지 일시',
@@ -313,22 +372,59 @@ export class BookDetailView extends View<BookDetailViewStatus> {
                 height: 24
             }
         });
-        
-        // this.bookIdView = new TextAreaView('bookId');
-        // this.isbnView = new TextAreaView('ISBN');
-        // this.totalCountView = new TextAreaView('totalCount');
-        // this.freeCountView = new TextAreaView('freeCount');
-        // this.bookNameView = new TextAreaView('bookName');
-        // this.writerNameView = new TextAreaView('writerName');
-        // this.originPriceView = new TextAreaView('originPrice');
-        // this.sellPriceView = new TextAreaView('sellPrice');
-        // this.lendPriceView = new TextAreaView('lendPrice');
-        // this.publisherView = new TextAreaView('publisher');
-        // this.copyrightView = new TextAreaView('copyright');
-        // this.bookInfoView = new TextAreaView('bookInfo');
-        // this.writerInfoView = new TextAreaView('writerInfo');
-        // this.previewView = new TextAreaView('preview');
-        // this.keywordView = new TextAreaView('keyword');
+
+        this.btnSave = new ButtonView(null);
+        this.btnSave.element.textContent = '저장';
+        this.btnSave.element.className = 'btnSave';
+        this.element.appendChild(this.btnSave.element);
+        this.btnSave.setOnClick(() => {
+            // private bookMainInfoGrid: Grid;
+            // private bookGubunInfoGrid: Grid;
+            // private bookBookNameInfoGrid: Grid;
+            // private bookWriterInfoGrid: Grid;
+            // private bookPriceInfoGrid: Grid;
+            // private bookPublisherInfoGrid: Grid;
+            // private bookInfoGrid: Grid;
+            // private bookPreviewInfoGrid: Grid;
+            // private bookOpenInfoGrid: Grid;
+            // private bookSellStatusInfoGrid: Grid;
+
+            this.state.book.순번 = Number(this.bookMainInfoGrid.getValue(0, 'id').toString());
+            this.state.book.ISBN = this.bookMainInfoGrid.getValue(0, 'isbn').toString();
+
+            this.state.book.구분1 = this.bookGubunInfoGrid.getValue(0, 'gubun').toString();
+            this.state.book.구분2 = this.bookGubunInfoGrid.getValue(0, 'kind').toString();
+            this.state.book.총회차 = Number(this.bookGubunInfoGrid.getValue(0, 'totalCount').toString());
+            this.state.book.무료회차 = Number(this.bookGubunInfoGrid.getValue(0, 'freeCount').toString());
+
+            this.state.book.도서명 = this.bookBookNameInfoGrid.getValue(0, 'bookName').toString();
+            this.state.book.완결 = this.bookBookNameInfoGrid.getValue(0, 'finish').toString();
+            this.state.book.성인 = this.bookBookNameInfoGrid.getValue(0, 'adult').toString();
+
+            this.state.book.저자명 = this.bookWriterInfoGrid.getValue(0, 'writerName').toString();
+            this.state.book.발행일 = Number(this.bookWriterInfoGrid.getValue(0, 'startDate').toString());
+            // this.state.book.대여여부 = this.bookWriterInfoGrid.getValue(0, 'isbn').toString();
+
+            this.state.book.정가 = Number(this.bookPriceInfoGrid.getValue(0, 'originPrice').toString());
+            this.state.book.판매가 = Number(this.bookPriceInfoGrid.getValue(0, 'sellPrice').toString());
+            this.state.book.대여가 = Number(this.bookPriceInfoGrid.getValue(0, 'lendPrice').toString());
+            this.state.book.대여일 = Number(this.bookPriceInfoGrid.getValue(0, 'lendDate').toString());
+
+            this.state.book.출판사 = this.bookPublisherInfoGrid.getValue(0, 'publisher').toString();
+            this.state.book.저작권자 = this.bookPublisherInfoGrid.getValue(0, 'copyright').toString();
+
+            this.state.book.작품소개 = this.bookInfoGrid.getValue(0, 'bookInfo').toString();
+            this.state.book.저자소개 = this.bookInfoGrid.getValue(0, 'writerInfo').toString();
+
+            this.state.book.출판사서평 = this.bookPreviewInfoGrid.getValue(0, 'preview').toString();
+            this.state.book.키워드 = this.bookPreviewInfoGrid.getValue(0, 'keyword').toString();
+
+            this.state.book.독점 = this.bookOpenInfoGrid.getValue(0, 'platform').toString();
+            console.log(this.state.book);
+            // this.state.book.독점종료일 = this.bookOpenInfoGrid.getValue(0, 'publisher').toString();
+            // this.state.book.판매상태 = Number(this.bookSellStatusInfoGrid.getValue(0, 'lendDate').toString());
+            // this.state.book.중지 = Number(this.bookSellStatusInfoGrid.getValue(0, 'isbn').toString());
+        });
     }
 
     public render(): void {
@@ -346,8 +442,8 @@ export class BookDetailView extends View<BookDetailViewStatus> {
         }]);
         this.bookBookNameInfoGrid.resetData([{
             bookName: book.도서명,
-            finish: book.완결,
-            adult: book.성인
+            finish: book.완결 === '완결' ? 'O' : 'X',
+            adult: book.성인 === '성인' ? 'O' : 'X'
         }]);
 
         this.bookWriterInfoGrid.resetData([{
@@ -380,24 +476,9 @@ export class BookDetailView extends View<BookDetailViewStatus> {
             endDate: '' //book.독점종료일
         }]);
         this.bookSellStatusInfoGrid.resetData([{
-            sellStatus: '판매중',
+            sellStatus: 'O',
             endDate2: ''
         }]);
-        // this.bookIdView.setState(new TextAreaViewStatus(`${book.순번}`));
-        // this.isbnView.setState(new TextAreaViewStatus(book.ISBN));
-        // this.totalCountView.setState(new TextAreaViewStatus(`${book.총회차}`));
-        // this.freeCountView.setState(new TextAreaViewStatus(`${book.무료회차}`));
-        // this.bookNameView.setState(new TextAreaViewStatus(book.도서명));
-        // this.writerNameView.setState(new TextAreaViewStatus(book.저자명));
-        // this.originPriceView.setState(new TextAreaViewStatus(book.정가));
-        // this.sellPriceView.setState(new TextAreaViewStatus(book.판매가));
-        // this.lendPriceView.setState(new TextAreaViewStatus(book.대여가));
-        // this.publisherView.setState(new TextAreaViewStatus(book.출판사));
-        // this.copyrightView.setState(new TextAreaViewStatus(book.저작권자));
-        // this.bookInfoView.setState(new TextAreaViewStatus(book.작품소개));
-        // this.writerInfoView.setState(new TextAreaViewStatus(book.저자소개));
-        // this.previewView.setState(new TextAreaViewStatus(book.출판사서평));
-        // this.keywordView.setState(new TextAreaViewStatus(book.키워드));
     }
 
     public getCurrentValues(): Array<string> {
@@ -418,6 +499,22 @@ export class BookDetailView extends View<BookDetailViewStatus> {
             // this.previewView.getText(),
             // this.keywordView.getText()
         ];
+    }
+
+    private onChangeBook완결(value: string): void {
+        this.state.book.완결 = value;
+    }
+
+    private onChangeBook성인(value: string): void {
+        this.state.book.성인 = value;
+    }
+
+    private onChangeBook대여여부(value: string): void {
+        // this.state.book.대여여부 = value;
+    }
+
+    private onChangeBook판매상태(value: string): void {
+        this.state.book.판매상태 = value === 'O';
     }
 }
 

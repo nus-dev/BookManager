@@ -21,19 +21,19 @@
     "xlsx": "^0.16.7"
   },
   "devDependencies": {
-    "express": "^4.17.1",
-    "tsc": "^1.20150623.0",
-    "tslint": "^6.1.2",
-    "http": "0.0.1-security",
     "asar": "^3.0.3",
     "electron": "^10.1.2",
-    "electron-builder": "^22.8.0",
+    "electron-builder": "^22.8.1",
     "electron-installer-squirrel-windows": "^1.3.0",
     "electron-is-dev": "^1.2.0",
     "electron-packager": "^15.1.0",
     "electron-prebuilt": "^1.4.13",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
     "source-map-loader": "^0.2.4",
     "ts-loader": "^7.0.2",
+    "tsc": "^1.20150623.0",
+    "tslint": "^6.1.2",
     "typescript": "^3.8.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
@@ -42,6 +42,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch --watch-poll",
     "start": "electron .",
+    "start2": "node_modules/.bin/electron .",
     "deploy": "electron-builder --windows nsis:ia32",
     "server": "node public/server.js"
   },

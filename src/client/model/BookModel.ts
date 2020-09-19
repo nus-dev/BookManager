@@ -23,10 +23,10 @@ export class BookModel {
     public "저자소개": string;
     public "출판사서평": string;
     public "키워드": string;
-    public "정가": string;
-    public "판매가": string;
-    public "대여가": string;
-    public "대여일": string;
+    public "정가": number;
+    public "판매가": number;
+    public "대여가": number;
+    public "대여일": number;
     public "정액제": string;
     public "총회차": number;
     public "무료회차": number;
