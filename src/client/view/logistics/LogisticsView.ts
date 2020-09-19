@@ -10,14 +10,16 @@ export class BookLogisticsView extends View<BookLogisticsViewStatus>{
     constructor(id: string) {
         super(id);
 
-        this.logisticsGridView = new LogisticsGridView('logisticsGridTable');
+        this.logisticsGridView = new LogisticsGridView('logisticsGrid');
     }
-    
+
     public render(): void {
-        this.state.visible ? this.element.classList.remove('hide') : this.element.classList.add('hide');
-        if (this.state.visible) {
-            this.logisticsGridView.setState(new LogisticsGridViewStatus(this.state.books, this.state.logistics));
+        if (!this.state.visible) {
+            this.element.classList.add('hide');
+            return;
         }
+        this.logisticsGridView.setState(new LogisticsGridViewStatus(this.state.books, this.state.logistics));
+        this.element.classList.remove('hide');
     }
 
     private onSelect(book: BookModel): void {

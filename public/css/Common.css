@@ -31,7 +31,7 @@ td input:focus, td textarea:focus {
 }
 
 .hide {
-    display: none;
+    visibility: hidden;
 }
 
 .disabled {
