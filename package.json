@@ -9,6 +9,8 @@
     "babel-loader": "^8.1.0",
     "concurrently": "^5.3.0",
     "cross-env": "^7.0.2",
+    "excel4node": "^1.7.2",
+    "exceljs": "^4.1.1",
     "express": "^4.17.1",
     "http": "0.0.1-security",
     "socket.io": "^2.3.0",
@@ -41,6 +43,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch --watch-poll",
+    "watchDev": "webpack --watch --mode development",
     "start": "electron .",
     "start2": "node_modules/.bin/electron .",
     "deploy": "electron-builder --windows nsis:ia32",
