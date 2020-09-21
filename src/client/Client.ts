@@ -22,7 +22,14 @@ class Client {
         
         new BookManagerVC();
 
-        ExcelAgent.readExcelFile('C:/Users/JSONG/Documents/BookManager/public/도서정보_MH_서식변경.xlsx').then(data => console.log(data));
+        ExcelAgent.readExcelFile('C:/Users/JSONG/Documents/BookManager/public/도서정보_MH_서식변경.xlsx').then(data => {
+            console.log(data);
+            const firstBook = data[0][0];
+            const logistics = data[1][0];
+
+            console.log(Object.keys(firstBook));
+            console.log(Object.keys(logistics));
+        });
     }
 }
 
