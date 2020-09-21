@@ -44,7 +44,7 @@ export class BookInfoGridView extends View<BookInfoGridViewStatus> {
                 {
                     header: '판매상태',
                     name: 'sellState',
-                    width: 80
+                    width: 70
                 },
             ],
             rowHeight: 40
@@ -60,7 +60,7 @@ export class BookInfoGridView extends View<BookInfoGridViewStatus> {
         this.gridInstance.resetData(this.state.books.map((book: BookModel) => {
             return {
                 id: book.순번,
-                gubun: book.구분1,
+                gubun: book.구분,
                 bookName: book.도서명,
                 writer: book.저자명,
                 publisher: book.출판사,

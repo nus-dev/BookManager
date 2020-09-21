@@ -5,6 +5,7 @@ import { BookInfoGridView } from "./view/bookmanage/BookInfoGridView";
 import * as path from 'path';
 import BookLogisticsDC from "./dc/BookLogisticsDC";
 import ExcelAgent from "./agent/ExcelAgent";
+import ConfigDC from "./dc/ConfigDC";
 
 class Client {
     constructor() {
@@ -17,19 +18,25 @@ class Client {
         // const books = BookDC.getBooksByName('연재');
         // console.log(Date.now());
 
-        BookDC.loadFromJson(path.join(__dirname, '../../testData/BookData.json'));
-        BookLogisticsDC.loadFromJson(path.join(__dirname, '../../testData/BookData.json'));
-        
-        new BookManagerVC();
+        // BookDC.loadFromJson(path.join(__dirname, '../../testData/BookData.json'));
+        // BookLogisticsDC.loadFromJson(path.join(__dirname, '../../testData/BookData.json'));
+        ConfigDC.readFromJson(path.join(__dirname, '../../public/config/config.json'));
+            
 
-        ExcelAgent.readExcelFile('C:/Users/JSONG/Documents/BookManager/public/도서정보_MH_서식변경.xlsx').then(data => {
-            console.log(data);
-            const firstBook = data[0][0];
-            const logistics = data[1][0];
+        (async () => {
+            await BookDC.readExcelFile(path.join(__dirname, '../../public/도서정보_MH_서식변경.xlsx'));
+            new BookManagerVC();
+        })();
 
-            console.log(Object.keys(firstBook));
-            console.log(Object.keys(logistics));
-        });
+        // new BookManagerVC();
+        // ExcelAgent.readExcelFile(path.join(__dirname, '../../public/도서정보_MH_서식변경.xlsx')).then(data => {
+        //     // console.log(data);
+        //     // const firstBook = data[0][0];
+        //     // const logistics = data[1][0];
+
+        //     // console.log(Object.keys(firstBook));
+        //     // console.log(Object.keys(logistics));
+        // });
     }
 }
 

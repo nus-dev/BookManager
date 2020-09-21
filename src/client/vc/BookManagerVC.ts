@@ -8,6 +8,7 @@ import { DivView, DivViewStatus } from "../view/common/DivView";
 import { InputView } from "../view/common/IntputView";
 import { SelectView } from "../view/common/SelectView";
 import BookLogisticsDC from "../dc/BookLogisticsDC";
+import ConfigDC from "../dc/ConfigDC";
 
 export class BookManagerVC {
     private bookManageView: BookManageView;
@@ -20,11 +21,12 @@ export class BookManagerVC {
 
     private searchKeywordInput: InputView;
     private selectSearchTarget: SelectView;
+    private isDetailView: boolean = true;
 
     constructor() {
         const bookManageView = new BookManageView('manageMain');
-        bookManageView.setState(new BookManageViewStatus(true, BookDC.getBooksByName('연재')));
-        // bookManageView.setState(new BookManageViewStatus(true, BookDC.getAllBooks()));
+        // bookManageView.setState(new BookManageViewStatus(true, BookDC.getBooksByName('연재')));
+        bookManageView.setState(new BookManageViewStatus(true, []));
 
         const bookLogisticsView = new BookLogisticsView('logisticsMain');
         this.bookLogisticsView = bookLogisticsView;
@@ -40,6 +42,17 @@ export class BookManagerVC {
 
         // const btnBookDetailUpdate = new ButtonView('btnBookDetailUpdate');
         // this.btnBookDetailUpdate = btnBookDetailUpdate;
+
+        const btnExportToFile = new ButtonView('exportToFile');
+        btnExportToFile.setOnClick(() => {
+            this.isDetailView ? BookDC.saveAll() : BookDC.save();
+        });
+
+        const btnUpload = new ButtonView('upload');
+        btnUpload.setOnClick(() => {
+            this.btnBookManage.click();
+            BookDC.upload();
+        });
 
         const btnOpenSearchPopup = new ButtonView('openSearchPopup');
         const searchPopupView = new DivView('searchPopup');
@@ -98,14 +111,16 @@ export class BookManagerVC {
             this.btnBookManage.setState(new ButtonViewStatus(false));
             this.btnBookLogistics.setState(new ButtonViewStatus(true));
             this.bookManageView.setState(new BookManageViewStatus(false, BookDC.getSearchedBooks()));
-            this.bookLogisticsView.setState(new BookLogisticsViewStatus(true, BookDC.getSearchedBooks(), BookLogisticsDC.getLogistics()));
+            this.bookLogisticsView.setState(new BookLogisticsViewStatus(true, BookDC.getSearchedBooks(), ConfigDC.getPlatforms()));
+            this.isDetailView = false;
         });
 
         this.btnBookManage.setOnClick((ev: MouseEvent) => {
             this.btnBookManage.setState(new ButtonViewStatus(true));
             this.btnBookLogistics.setState(new ButtonViewStatus(false));
             this.bookManageView.setState(new BookManageViewStatus(true, BookDC.getSearchedBooks()));
-            this.bookLogisticsView.setState(new BookLogisticsViewStatus(false, BookDC.getSearchedBooks(), BookLogisticsDC.getLogistics()));
+            this.bookLogisticsView.setState(new BookLogisticsViewStatus(false, BookDC.getSearchedBooks(), ConfigDC.getPlatforms()));
+            this.isDetailView = true;
         });
 
         // this.btnBookDetailUpdate.setOnClick((ev: MouseEvent) => {

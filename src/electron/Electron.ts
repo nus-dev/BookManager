@@ -1,7 +1,6 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import * as isDev from 'electron-is-dev'
 import * as path from 'path'
-
 // 1. GC가 일어나지 않도록 밖에 빼줌
 let main_window: BrowserWindow
 
@@ -58,3 +57,15 @@ app.on('ready', create_window)
 app.on('window-all-closed', () => {
     app.quit()
 })
+
+ipcMain.on('showFileSaveDialog', (event, args) => {
+    const filePath = dialog.showSaveDialogSync({
+        defaultPath: args
+    });
+    event.sender.send('savedFilePath', filePath);
+});
+
+ipcMain.on('showFileOpenDialog', (event) => {
+    const filePath = dialog.showOpenDialogSync({});
+    event.sender.send('openFilePath', filePath);
+});

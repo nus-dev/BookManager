@@ -2,6 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import ExcelAgent from '../agent/ExcelAgent';
 import { BookModel } from '../model/BookModel';
+import {ipcRenderer, IpcRendererEvent} from 'electron';
+import ConfigDC from './ConfigDC';
 
 class BookDC {
     private books: Array<BookModel> = [];
@@ -14,11 +16,11 @@ class BookDC {
     //     this.books = jsonObject.Sheet1;
     // }
 
-    public loadFromJson(jsonFilePath: string): void {
-        const data = fs.readFileSync(jsonFilePath, 'utf8');
-        const jsonObject = JSON.parse(data);
-        this.books = jsonObject.Sheet1;
-    }
+    // public loadFromJson(jsonFilePath: string): void {
+    //     const data = fs.readFileSync(jsonFilePath, 'utf8');
+    //     const jsonObject = JSON.parse(data);
+    //     this.books = jsonObject.Sheet1;
+    // }
 
     // public getBookCountByIdx(idx: number): number {
     //     return this.books.reduce((prev: number, curr: BookModel) => curr.순번 === idx ? prev + 1 : prev, 0);
@@ -51,7 +53,7 @@ class BookDC {
     }
 
     public getBooksBySellStatus(sellStatus: boolean): Array<BookModel> {
-        this.searchedBooks = this.books.filter((book: BookModel) => book.판매상태 === sellStatus);
+        this.searchedBooks = this.books.filter((book: BookModel) => book.판매상태 === (sellStatus ? 'O' : 'X'));
         return this.searchedBooks;
     }
 
@@ -73,11 +75,51 @@ class BookDC {
     }
 
     public save() {
-        ExcelAgent.writeExcelFile(this.books, 'C:/Users/NUS/Documents/Dev/aaa.xlsx');
+        const onFileDialogOff = (event: IpcRendererEvent, args: any) => {
+            ipcRenderer.off('savedFilePath', onFileDialogOff);
+
+            if (args) {
+                // ExcelAgent.writeExcelFileAll(this.searchedBooks, 'C:/Users/NUS/Documents/Dev/aaa.xlsx');
+                ExcelAgent.writeExcelFileOnlyLogistics(this.searchedBooks, ConfigDC.getPlatforms(), args);
+            }
+        }
+        ipcRenderer.on('savedFilePath', onFileDialogOff);
+        ipcRenderer.send('showFileSaveDialog', '도서관리.xlsx');
     }
 
-    public readExcelFile() {
-        ExcelAgent.readExcelFile('C:/Users/NUS/Documents/Dev/aaa.xlsx');
+    public saveAll() {
+        const onFileDialogOff = (event: IpcRendererEvent, args: any) => {
+            ipcRenderer.off('savedFilePath', onFileDialogOff);
+
+            if (args) {
+                // ExcelAgent.writeExcelFileAll(this.searchedBooks, 'C:/Users/NUS/Documents/Dev/aaa.xlsx');
+                ExcelAgent.writeExcelFileAll(this.searchedBooks, ConfigDC.getPlatforms(), args);
+            }
+        }
+        ipcRenderer.on('savedFilePath', onFileDialogOff);
+        ipcRenderer.send('showFileSaveDialog', '도서관리.xlsx');
+    }
+
+    public async readExcelFile(filePath: string): Promise<void> {
+        const bookModels: Array<BookModel> = await ExcelAgent.readExcelFile(filePath);
+        this.books = bookModels;
+    }
+
+    public upload(): void {
+        const onFileDialogOff = (event: IpcRendererEvent, args: any) => {
+            ipcRenderer.off('openFilePath', onFileDialogOff);
+
+            if (args && args.length > 0) {
+                // ExcelAgent.writeExcelFileAll(this.searchedBooks, 'C:/Users/NUS/Documents/Dev/aaa.xlsx');
+                // ExcelAgent.writeExcelFileAll(this.searchedBooks, ConfigDC.getPlatforms(), args);
+                (async () => {
+                    await this.readExcelFile(args[0]);
+                    alert('로드가 완료되었습니다');
+                })();
+            }
+        }
+        ipcRenderer.on('openFilePath', onFileDialogOff);
+        ipcRenderer.send('showFileOpenDialog', 'xlsx');
     }
 
     public update(): Promise<void> {

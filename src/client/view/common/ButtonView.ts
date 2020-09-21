@@ -24,6 +24,10 @@ export class ButtonView extends View<ButtonViewStatus> {
     public setOnClick(handler: (ev: MouseEvent) => void): void {
         this.onClickHandlers.push(handler);
     }
+
+    public click(): void {
+        this.onClick(null);
+    }
 }
 
 export class ButtonViewStatus extends ViewState {

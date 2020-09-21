@@ -32,7 +32,7 @@ export class BookLogisticsView extends View<BookLogisticsViewStatus>{
 }
 
 export class BookLogisticsViewStatus extends ViewState {
-    constructor(public visible: boolean, public books: Array<BookModel>, public logistics: Array<BookLogistics>) {
+    constructor(public visible: boolean, public books: Array<BookModel>, public logistics: Array<string>) {
         super();
     }
 }
