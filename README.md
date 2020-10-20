@@ -1,5 +1,5 @@
-# WebArkamHorror
-WebArkamHorror
+# BookManager
+BookManager
 
 # Tech Stack
 ## SCM (Source Code Management)
