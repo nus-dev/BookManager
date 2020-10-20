@@ -8,8 +8,7 @@ github
 ## Language & Framework
 Typescript  
 Nodejs  
-## Database
-MongeDB  
+Electron  
 ## Packege & Repo Management
 npm  
 Webpack
