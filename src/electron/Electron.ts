@@ -65,7 +65,17 @@ ipcMain.on('showFileSaveDialog', (event, args) => {
     event.sender.send('savedFilePath', filePath);
 });
 
-ipcMain.on('showFileOpenDialog', (event) => {
-    const filePath = dialog.showOpenDialogSync({});
+ipcMain.on('showFileOpenDialog', (event, args) => {
+    const filePath = dialog.showOpenDialogSync({
+        filters: [{name: args, extensions: [args]}]
+    });
     event.sender.send('openFilePath', filePath);
+});
+
+ipcMain.on('showMessageBox', (event, ...args) => {
+    const idx = dialog.showMessageBoxSync(main_window, {
+        message: args[0],
+        buttons: args[1]
+    });
+    event.sender.send('message', idx);
 });

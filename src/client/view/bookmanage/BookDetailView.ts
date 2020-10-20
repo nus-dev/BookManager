@@ -1,57 +1,8 @@
 import {BookModel} from "../../model/BookModel";
-import {TextAreaView, TextAreaViewStatus} from "../common/TextAreaView";
 import {View, ViewState} from "../View";
 import Grid from 'tui-grid';
-import {CellRendererProps} from 'tui-grid/types/renderer';
-import { ButtonView } from "../common/ButtonView";
+import {ButtonView} from "../common/ButtonView";
 import ConfigDC from "../../dc/ConfigDC";
-import DateConvertUtil from "./util/DateConvertUtil";
-
-// class RadioRenderer {
-//     private el: HTMLDivElement;
-
-//     constructor(props: CellRendererProps) {
-//         const option = props.columnInfo.renderer.options;
-//         const el = document.createElement('div');
-//         el.appendChild(this.createInputElement(option.name, 'O', false));
-//         el.appendChild(this.createInputElement(option.name, 'X', false));
-
-//         el.addEventListener('mousedown', (ev) => {
-//             ev.stopPropagation();
-//         });
-
-//         el.addEventListener('change', () => {
-//             const value = (this.el.querySelector(`input[name=${option.name}]:checked`) as any).value;
-//             // option.onChange(value);
-//         });
-
-//         this.el = el;
-//         this.render(props);
-//     }
-
-//     private createInputElement(name: string, value: string, checked: boolean): HTMLLabelElement {
-//         const labelElement = document.createElement('label');
-//         labelElement.textContent = value;
-//         const element = document.createElement('input');
-//         labelElement.appendChild(element);
-//         element.type = 'radio';
-//         element.name = name;
-//         element.checked = checked;
-//         element.value = value;
-//         return labelElement;
-//     }
-
-//     getElement() {
-//         return this.el;
-//     }
-
-//     render(props: CellRendererProps) {
-//         const value = props.grid.getValue(props.rowKey, props.columnInfo.name);
-//         console.log(value);
-//         // (this.el.querySelector('input[name=완결]:checked') as any).value
-//         // this.el.value = String(props.value);
-//     }
-// }
 
 export class BookDetailView extends View<BookDetailViewStatus> {
     private bookMainInfoGrid: Grid;
@@ -229,15 +180,6 @@ export class BookDetailView extends View<BookDetailViewStatus> {
                 height: 24
             }
         });
-        // this.bookWriterInfoGrid.on('afterChange', () => {
-        //     let temp: any = this.bookWriterInfoGrid.getValue(0, 'startDate');
-        //     for (let i = 0; i < 10; i++) {
-        //         temp = DateConvertUtil.dateStringToExcelDate(temp);
-        //         console.log(temp);
-        //         temp = DateConvertUtil.excelDateToDateString(temp);
-        //         console.log(temp);
-        //     }
-        // });
 
         this.bookPriceInfoGrid = new Grid({
             el: this.element,
@@ -410,68 +352,50 @@ export class BookDetailView extends View<BookDetailViewStatus> {
             }
         });
 
-        this.bookMainInfoGrid.on('click', () => this.finishEditing());
-        this.bookGubunInfoGrid.on('click', () => this.finishEditing());
-        this.bookBookNameInfoGrid.on('click', () => this.finishEditing());
-        this.bookWriterInfoGrid.on('click', () => this.finishEditing());
-        this.bookPriceInfoGrid.on('click', () => this.finishEditing());
-        this.bookPublisherInfoGrid.on('click', () => this.finishEditing());
-        this.bookInfoGrid.on('click', () => this.finishEditing());
-        this.bookPreviewInfoGrid.on('click', () => this.finishEditing());
-        this.bookOpenInfoGrid.on('click', () => this.finishEditing());
-        this.bookSellStatusInfoGrid.on('click', () => this.finishEditing());
-
         this.btnSave = new ButtonView(null);
         this.btnSave.element.textContent = '저장';
         this.btnSave.element.className = 'btnSave';
         this.element.appendChild(this.btnSave.element);
         this.btnSave.setOnClick(() => {
-            // console.log(this.bookBookNameInfoGrid.getValue(0, 'adult').toString());
-            // console.log(this.bookBookNameInfoGrid.getValue(0, 'adult').toString());
-            // console.log(this.bookBookNameInfoGrid.getValue(0, 'adult').toString());
-            // console.log(this.bookBookNameInfoGrid.getValue(0, 'adult').toString());
-            // console.log(this.bookBookNameInfoGrid.getValue(0, 'adult').toString());
-            // // private bookMainInfoGrid: Grid;
-            // // private bookGubunInfoGrid: Grid;
-            // // private bookBookNameInfoGrid: Grid;
-            // // private bookWriterInfoGrid: Grid;
-            // // private bookPriceInfoGrid: Grid;
-            // // private bookPublisherInfoGrid: Grid;
-            // // private bookInfoGrid: Grid;
-            // // private bookPreviewInfoGrid: Grid;
-            // // private bookOpenInfoGrid: Grid;
-            // // private bookSellStatusInfoGrid: Grid;
-            this.state.book.순번 = Number(this.bookMainInfoGrid.getValue(0, 'id').toString());
-            this.state.book.ISBN = this.bookMainInfoGrid.getValue(0, 'isbn').toString();
+            this.finishEditing();
 
-            this.state.book.구분 = this.bookGubunInfoGrid.getValue(0, 'gubun').toString();
-            this.state.book.분류 = this.bookGubunInfoGrid.getValue(0, 'kind').toString();
-            this.state.book.총회차 = Number(this.bookGubunInfoGrid.getValue(0, 'totalCount').toString());
-            this.state.book.무료회차 = Number(this.bookGubunInfoGrid.getValue(0, 'freeCount').toString());
+            this.state.book.순번 = this.bookMainInfoGrid.getFormattedValue(0, 'id') || '';
+            this.state.book.ISBN = this.bookMainInfoGrid.getFormattedValue(0, 'isbn') || '';
 
-            this.state.book.도서명 = this.bookBookNameInfoGrid.getValue(0, 'bookName').toString();
-            this.state.book.완결 = this.bookBookNameInfoGrid.getValue(0, 'finish').toString();
-            this.state.book.성인 = this.bookBookNameInfoGrid.getValue(0, 'adult').toString();
+            this.state.book.구분 = this.bookGubunInfoGrid.getFormattedValue(0, 'gubun') || '';
+            this.state.book.분류 = this.bookGubunInfoGrid.getFormattedValue(0, 'kind') || '';
+            this.state.book.총회차 = this.bookGubunInfoGrid.getFormattedValue(0, 'totalCount') || '';
+            this.state.book.무료회차 = this.bookGubunInfoGrid.getFormattedValue(0, 'freeCount') || '';
 
-            this.state.book.저자명 = this.bookWriterInfoGrid.getValue(0, 'writerName').toString();
-            this.state.book.발행일 = Number(this.bookWriterInfoGrid.getValue(0, 'startDate').toString());
-            // this.state.book.대여여부 = this.bookWriterInfoGrid.getValue(0, 'isbn').toString();
+            this.state.book.도서명 = this.bookBookNameInfoGrid.getFormattedValue(0, 'bookName') || '';
+            this.state.book.완결 = this.bookBookNameInfoGrid.getFormattedValue(0, 'finish') || '';
+            this.state.book.성인 = this.bookBookNameInfoGrid.getFormattedValue(0, 'adult') || '';
 
-            this.state.book.정가 = Number(this.bookPriceInfoGrid.getValue(0, 'originPrice').toString());
-            this.state.book.판매가 = Number(this.bookPriceInfoGrid.getValue(0, 'sellPrice').toString());
-            this.state.book.대여가 = Number(this.bookPriceInfoGrid.getValue(0, 'lendPrice').toString());
-            this.state.book.대여일 = Number(this.bookPriceInfoGrid.getValue(0, 'lendDate').toString());
+            this.state.book.저자명 = this.bookWriterInfoGrid.getFormattedValue(0, 'writerName') || '';
+            this.state.book.발행일 = this.bookWriterInfoGrid.getFormattedValue(0, 'startDate') || '';
+            this.state.book.대여여부 = this.bookWriterInfoGrid.getFormattedValue(0, 'lendable') || '';
 
-            this.state.book.출판사 = this.bookPublisherInfoGrid.getValue(0, 'publisher').toString();
-            this.state.book.저작권자 = this.bookPublisherInfoGrid.getValue(0, 'copyright').toString();
+            this.state.book.정가 = this.bookPriceInfoGrid.getFormattedValue(0, 'originPrice') || '';
+            this.state.book.판매가 = this.bookPriceInfoGrid.getFormattedValue(0, 'sellPrice') || '';
+            this.state.book.대여가 = this.bookPriceInfoGrid.getFormattedValue(0, 'lendPrice') || '';
+            this.state.book.대여일 = this.bookPriceInfoGrid.getFormattedValue(0, 'lendDate') || '';
 
-            this.state.book.작품소개 = this.bookInfoGrid.getValue(0, 'bookInfo').toString();
-            this.state.book.저자소개 = this.bookInfoGrid.getValue(0, 'writerInfo').toString();
+            this.state.book.출판사 = this.bookPublisherInfoGrid.getFormattedValue(0, 'publisher') || '';
+            this.state.book.저작권자 = this.bookPublisherInfoGrid.getFormattedValue(0, 'copyright') || '';
 
-            this.state.book.출판사서평 = this.bookPreviewInfoGrid.getValue(0, 'preview').toString();
-            this.state.book.키워드 = this.bookPreviewInfoGrid.getValue(0, 'keyword').toString();
+            this.state.book.작품소개 = this.bookInfoGrid.getFormattedValue(0, 'bookInfo') || '';
+            this.state.book.저자소개 = this.bookInfoGrid.getFormattedValue(0, 'writerInfo') || '';
 
-            this.state.book.독점 = this.bookOpenInfoGrid.getValue(0, 'platform').toString();
+            this.state.book.출판사서평 = this.bookPreviewInfoGrid.getFormattedValue(0, 'preview') || '';
+            this.state.book.키워드 = this.bookPreviewInfoGrid.getFormattedValue(0, 'keyword') || '';
+
+            this.state.book["독점 플랫폼"] = this.bookOpenInfoGrid.getFormattedValue(0, 'platform') || '';
+            this.state.book.독점종료일 = this.bookOpenInfoGrid.getFormattedValue(0, 'endDate') || '';
+
+            this.state.book.판매상태 = this.bookSellStatusInfoGrid.getFormattedValue(0, 'sellState') || '';
+            // this.state.book.종료 = this.bookSellStatusInfoGrid.getFormattedValue(0, 'endDate2') || '';
+            
+            this.render();
         });
     }
 
@@ -489,6 +413,8 @@ export class BookDetailView extends View<BookDetailViewStatus> {
     }
 
     public render(): void {
+        this.finishEditing();
+        
         const book: BookModel = this.state.book;
 
         this.bookMainInfoGrid.resetData([{
@@ -513,6 +439,14 @@ export class BookDetailView extends View<BookDetailViewStatus> {
             lendable: book.대여여부
         }]);
 
+        if (book.대여여부 === 'O') {
+            this.bookPriceInfoGrid.enableColumn('lendPrice');
+            this.bookPriceInfoGrid.enableColumn('lendDate');
+        } else {
+            this.bookPriceInfoGrid.disableColumn('lendPrice');
+            this.bookPriceInfoGrid.disableColumn('lendDate');
+        }
+
         this.bookPriceInfoGrid.resetData([{
             originPrice: book.정가 || '',
             sellPrice: book.판매가 || '',
@@ -531,10 +465,24 @@ export class BookDetailView extends View<BookDetailViewStatus> {
             preview: book.출판사서평 || '',
             keyword: book.키워드 || ''
         }]);
+
+        if (book["독점 플랫폼"] === '') {
+            this.bookOpenInfoGrid.disableColumn('endDate');
+        } else {
+            this.bookOpenInfoGrid.enableColumn('endDate');
+        }
+
         this.bookOpenInfoGrid.resetData([{
-            platform: book.독점,
+            platform: book["독점 플랫폼"],
             endDate: book.독점종료일
         }]);
+
+        if (book.판매상태 === 'O') {
+            this.bookSellStatusInfoGrid.enableColumn('endDate2');
+        } else {
+            this.bookSellStatusInfoGrid.disableColumn('endDate2');
+        }
+
         this.bookSellStatusInfoGrid.resetData([{
             sellStatus: book.판매상태,
             endDate2: ''

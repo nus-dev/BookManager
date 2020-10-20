@@ -7,7 +7,6 @@ import {BookLogisticsView, BookLogisticsViewStatus} from "../view/logistics/Logi
 import { DivView, DivViewStatus } from "../view/common/DivView";
 import { InputView } from "../view/common/IntputView";
 import { SelectView } from "../view/common/SelectView";
-import BookLogisticsDC from "../dc/BookLogisticsDC";
 import ConfigDC from "../dc/ConfigDC";
 
 export class BookManagerVC {
@@ -17,7 +16,6 @@ export class BookManagerVC {
 
     private btnBookLogistics: ButtonView;
     private btnBookManage: ButtonView;
-    // private btnBookDetailUpdate: ButtonView;
 
     private searchKeywordInput: InputView;
     private selectSearchTarget: SelectView;
@@ -25,7 +23,6 @@ export class BookManagerVC {
 
     constructor() {
         const bookManageView = new BookManageView('manageMain');
-        // bookManageView.setState(new BookManageViewStatus(true, BookDC.getBooksByName('연재')));
         bookManageView.setState(new BookManageViewStatus(true, []));
 
         const bookLogisticsView = new BookLogisticsView('logisticsMain');
@@ -40,23 +37,43 @@ export class BookManagerVC {
         const btnBookManage = new ButtonView('btnManage');
         this.btnBookManage = btnBookManage;
 
-        // const btnBookDetailUpdate = new ButtonView('btnBookDetailUpdate');
-        // this.btnBookDetailUpdate = btnBookDetailUpdate;
-
         const btnExportToFile = new ButtonView('exportToFile');
         btnExportToFile.setOnClick(() => {
-            this.isDetailView ? BookDC.saveAll() : BookDC.save();
+            this.isDetailView 
+                ? BookDC.saveAll() 
+                : (() => {
+                    if (this.bookLogisticsView.logisticsGridView.isFiltered()) {
+                        const filters = this.bookLogisticsView.logisticsGridView.getFilters();
+                        const books = BookDC.getSearchedBooks().filter(book => {
+                            return filters.every(filter => {
+                                return (book as any)[filter.columnName] && filter.state.map(s => s.value).indexOf((book as any)[filter.columnName]) >= 0;
+                            })
+                        })
+                        
+                        BookDC.save(books, filters.map(filter => filter.columnName));
+                    } else {
+                        BookDC.save(BookDC.getSearchedBooks(), ConfigDC.getPlatforms());
+                    }
+                })();
         });
 
         const btnUpload = new ButtonView('upload');
         btnUpload.setOnClick(() => {
             this.btnBookManage.click();
-            BookDC.upload();
+            (async () => {
+                await BookDC.upload();
+                this.bookManageView.setState(new BookManageViewStatus(true, BookDC.getAllBooks()));
+            })();
         });
 
         const btnOpenSearchPopup = new ButtonView('openSearchPopup');
         const searchPopupView = new DivView('searchPopup');
-        btnOpenSearchPopup.setOnClick((ev: MouseEvent) => searchPopupView.setState(new DivViewStatus(!searchPopupView.isShowed())));
+        btnOpenSearchPopup.setOnClick((ev: MouseEvent) => {
+            searchPopupView.setState(new DivViewStatus(!searchPopupView.isShowed()))
+            if (searchPopupView.isShowed()) {
+                window.resizeBy(10, 10);
+            }
+        });
         const popupBackgroundView = new DivView('popupBackgroundDiv');
         popupBackgroundView.setOnClick(() => searchPopupView.setState(new DivViewStatus(false)));
 
@@ -79,7 +96,8 @@ export class BookManagerVC {
         const searchType = this.selectSearchTarget.getValue();
 
         const books: Array<BookModel> = this.getBooks(keyword, searchType);
-        this.bookManageView.setState(new BookManageViewStatus(true, books));
+        if (this.isDetailView) this.bookManageView.setState(new BookManageViewStatus(true, books));
+        else this.bookLogisticsView.setState(new BookLogisticsViewStatus(true, books, ConfigDC.getPlatforms()));
     }
 
     private getBooks(keyword: string, searchType: string): Array<BookModel> {
@@ -88,7 +106,7 @@ export class BookManagerVC {
         }
 
         if (searchType === '책ID') {
-            const book: BookModel = BookDC.getBookByIdx(Number(keyword));
+            const book: BookModel = BookDC.getBookByIdx(keyword);
             return book ? [book] : [];
         } else if (searchType === '도서명') {
             return BookDC.getBooksByName(keyword);
@@ -122,26 +140,5 @@ export class BookManagerVC {
             this.bookLogisticsView.setState(new BookLogisticsViewStatus(false, BookDC.getSearchedBooks(), ConfigDC.getPlatforms()));
             this.isDetailView = true;
         });
-
-        // this.btnBookDetailUpdate.setOnClick((ev: MouseEvent) => {
-        //     const book: BookModel = BookDC.getSelectedBook();
-        //     const detailValues: Array<string> = this.bookDetailView.getCurrentValues();
-        //     book.순번 = Number(detailValues[0]);
-        //     book.ISBN = detailValues[1];
-        //     book.총회차 = Number(detailValues[2]);
-        //     book.무료회차 = Number(detailValues[3]);
-        //     book.도서명 = detailValues[4];
-        //     book.저자명 = detailValues[5];
-        //     book.정가 = detailValues[6];
-        //     book.판매가 = detailValues[7];
-        //     book.대여가 = detailValues[8];
-        //     book.출판사 = detailValues[9];
-        //     book.저작권자 = detailValues[10];
-        //     book.작품소개 = detailValues[11];
-        //     book.저자소개 = detailValues[12];
-        //     book.출판사서평 = detailValues[13];
-        //     book.키워드 = detailValues[14];
-        //     BookDC.update();
-        // });
     }
 }

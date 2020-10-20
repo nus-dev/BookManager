@@ -1,16 +1,21 @@
 import { BookLogistics } from "../../model/BookLogistics";
 import { BookModel } from "../../model/BookModel";
 import { View, ViewState } from "../View";
-import Grid from 'tui-grid';
+import Grid, { Filter } from 'tui-grid';
 
 export class LogisticsGridView extends View<LogisticsGridViewStatus> {
-    private readonly gridInstance: Grid;
+    public readonly gridInstance: Grid;
+    public changedDatas: Array<{
+        idx: number,
+        platform: string,
+        value: string
+    }> = [];
 
     constructor(id: string) {
         super(id);
         this.gridInstance = new Grid({
             el: this.element,
-            bodyHeight: 745,
+            bodyHeight: 680,
             width: 'auto',
             scrollX: true,
             scrollY: true,
@@ -29,18 +34,12 @@ export class LogisticsGridView extends View<LogisticsGridViewStatus> {
                 name: platform,
                 width: 100,
                 filter: 'select',
-                onBeforeChange(ev: any) {
-                    console.log('Grade before change:' + ev);
-                },
-                onAfterChange(ev: any) {
-                    console.log('Grade after change:' + ev);
-                },
                 copyOptions: {
                     useListItemText: true
                 },
                 formatter: 'listItemText',
                 editor: {
-                    type: 'radio',
+                    type: 'select',
                     options: {
                         listItems: [
                             { text: 'O', value: 'O' },
@@ -54,6 +53,9 @@ export class LogisticsGridView extends View<LogisticsGridViewStatus> {
     }
 
     public render(): void {
+        this.gridInstance.finishEditing();
+        this.changedDatas = [];
+
         this.gridInstance.setColumns([
                 { header: '책ID', name: 'id', width: 60 },
                 { header: '도서명', name: 'bookName', width: 410 },
@@ -63,6 +65,17 @@ export class LogisticsGridView extends View<LogisticsGridViewStatus> {
                 ...this.getLogisticsColumns()
             ]
         );
+
+        this.gridInstance.on('afterChange', (gridEvent) => {
+            const datas = Array.isArray((gridEvent as any).changes) ? (gridEvent as any).changes : [(gridEvent as any).changes];
+            this.changedDatas.push(...datas.map((data: any) => {
+                return {
+                    idx: data.rowKey,
+                    platform: data.columnName,
+                    value: data.value
+                }
+            }));
+        });
 
         this.gridInstance.resetData(
             this.state.books.map((book: BookModel) => {
@@ -76,6 +89,14 @@ export class LogisticsGridView extends View<LogisticsGridViewStatus> {
                 return platformMap;
             })
         );
+    }
+
+    public isFiltered(): boolean {
+        return this.gridInstance.getFilterState() && this.gridInstance.getFilterState().length > 0;
+    }
+
+    public getFilters(): Array<Filter> {
+        return this.gridInstance.getFilterState();
     }
 
     private getPlatformMap(book: BookModel): any {

@@ -7,3 +7,26 @@
     /* border: 1px solid black; */
     /* overflow: hidden; */
 }
+
+#btnAddPlatform {
+    /* position: absolute; */
+    position: relative;
+    width: 200px;
+    height: 60px;
+    left: 15px;
+    top: 765px;
+    border-radius: 7px;
+    background-color: white;
+    border: 1px solid black;
+}
+
+#btnSaveLogistics {
+    position: relative;
+    width: 100px;
+    height: 60px;
+    left: 1174px;
+    top: 765px;
+    border-radius: 7px;
+    background-color: white;
+    border: 1px solid black;
+}

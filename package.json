@@ -52,13 +52,13 @@
   "author": "",
   "license": "ISC",
   "build": {
-    "productName": "HelloElectron",
+    "productName": "BookManager",
     "appId": "com.electron.hello",
     "asar": true,
     "protocols": {
-      "name": "helloElectron",
+      "name": "BookManager",
       "schemes": [
-        "helloelectron"
+        "BookManager"
       ]
     },
     "win": {

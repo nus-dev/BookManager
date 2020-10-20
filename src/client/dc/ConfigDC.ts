@@ -21,7 +21,6 @@ class ConfigDC {
 
     public readFromJson(jsonFilePath: string): void {
         this.config = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
-        console.log(this.config);
     }
 
     public writeToJson(jsonFilePath: string): void {

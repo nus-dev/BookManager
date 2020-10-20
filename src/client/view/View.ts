@@ -17,7 +17,6 @@ export abstract class View<VIEWSTATE extends ViewState> {
         if (!this.state || this.state.isChanged(state)) {
             this.state = state;
             this.render();
-            // console.log('render');
         } else {
             this.state = state;
         }

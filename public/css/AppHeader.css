@@ -55,6 +55,7 @@
 }
 
 #inputSearchKeyword {
+    padding-left: 10px;
     width: 350px;
     height: 33px;
     border: 1px solid black;

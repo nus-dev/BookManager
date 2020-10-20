@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import ExcelAgent from '../agent/ExcelAgent';
 import { BookModel } from '../model/BookModel';
 import {ipcRenderer, IpcRendererEvent} from 'electron';
@@ -10,23 +8,7 @@ class BookDC {
     private searchedBooks: Array<BookModel> = [];
     private selectedBook: BookModel;
 
-    // constructor() {
-    //     const data = fs.readFileSync(path.join(__dirname, '../../../testData/BookData.json'), 'utf8');
-    //     const jsonObject = JSON.parse(data);
-    //     this.books = jsonObject.Sheet1;
-    // }
-
-    // public loadFromJson(jsonFilePath: string): void {
-    //     const data = fs.readFileSync(jsonFilePath, 'utf8');
-    //     const jsonObject = JSON.parse(data);
-    //     this.books = jsonObject.Sheet1;
-    // }
-
-    // public getBookCountByIdx(idx: number): number {
-    //     return this.books.reduce((prev: number, curr: BookModel) => curr.순번 === idx ? prev + 1 : prev, 0);
-    // }
-
-    public getBookByIdx(idx: number): BookModel {
+    public getBookByIdx(idx: string): BookModel {
         const searchedBook = this.books.find((book: BookModel) => book.순번 === idx);
         this.searchedBooks = searchedBook ? [searchedBook] : [];
         return searchedBook;
@@ -34,11 +16,6 @@ class BookDC {
 
     public getBooksByName(name: string): Array<BookModel> {
         this.searchedBooks = this.books.filter((book: BookModel) => book.도서명 && book.도서명.includes(name));
-        return this.searchedBooks;
-    }
-
-    public getBooksById(bookId: number): Array<BookModel> {
-        this.searchedBooks = this.books.filter((book: BookModel) => book.순번 && book.순번 === bookId);
         return this.searchedBooks;
     }
 
@@ -74,13 +51,13 @@ class BookDC {
         this.selectedBook = book;
     }
 
-    public save() {
+    public save(books: Array<BookModel>, platforms: Array<string>) {
         const onFileDialogOff = (event: IpcRendererEvent, args: any) => {
             ipcRenderer.off('savedFilePath', onFileDialogOff);
 
             if (args) {
                 // ExcelAgent.writeExcelFileAll(this.searchedBooks, 'C:/Users/NUS/Documents/Dev/aaa.xlsx');
-                ExcelAgent.writeExcelFileOnlyLogistics(this.searchedBooks, ConfigDC.getPlatforms(), args);
+                ExcelAgent.writeExcelFileOnlyLogistics(books, platforms, args);
             }
         }
         ipcRenderer.on('savedFilePath', onFileDialogOff);
@@ -102,24 +79,75 @@ class BookDC {
 
     public async readExcelFile(filePath: string): Promise<void> {
         const bookModels: Array<BookModel> = await ExcelAgent.readExcelFile(filePath);
-        this.books = bookModels;
+        bookModels.sort((book1, book2) => {
+            return Number(book1.순번) - Number(book2.순번)
+        });
+
+        if (bookModels.some(book => {
+            const idx = String(book.순번);
+            const oldBookk = this.books.find(oldBook => oldBook.순번 === idx);
+            return oldBookk && JSON.stringify(book) !== JSON.stringify(oldBookk);
+        })) {
+            // 덮어쓸거냐 물어봐서
+            const code = await this.showMessageBox();
+            if (code === 0) {
+                return;
+            }
+
+            if (code === 1) {
+                //덮어 쓴다면
+                const newBooks = this.books.filter(book => bookModels.every(oldBook => book.순번 !== oldBook.순번));
+                this.books = bookModels;
+                this.books.push(...newBooks);
+                this.books.sort((book1, book2) => {
+                    return Number(book1.순번) - Number(book2.순번)
+                });
+            } else {
+                //아니라면 안겹치는것만 넣어주기
+
+                const newBooks = bookModels.filter(book => this.books.every(oldBook => book.순번 !== oldBook.순번));
+                this.books.push(...newBooks);
+                this.books.sort((book1, book2) => {
+                    return Number(book1.순번) - Number(book2.순번)
+                });
+            }
+        } else {
+            this.books = bookModels;
+        }
     }
 
-    public upload(): void {
-        const onFileDialogOff = (event: IpcRendererEvent, args: any) => {
-            ipcRenderer.off('openFilePath', onFileDialogOff);
-
-            if (args && args.length > 0) {
-                // ExcelAgent.writeExcelFileAll(this.searchedBooks, 'C:/Users/NUS/Documents/Dev/aaa.xlsx');
-                // ExcelAgent.writeExcelFileAll(this.searchedBooks, ConfigDC.getPlatforms(), args);
-                (async () => {
-                    await this.readExcelFile(args[0]);
-                    alert('로드가 완료되었습니다');
-                })();
+    private showMessageBox(): Promise<number> {
+        return new Promise<number>((resolve, reject) => {
+            const onFileDialogOff = async (event: IpcRendererEvent, args: any) => {
+                try {
+                    ipcRenderer.off('message', onFileDialogOff);
+                    resolve(args);
+                } catch (e) {
+                    reject(e);
+                }
             }
-        }
-        ipcRenderer.on('openFilePath', onFileDialogOff);
-        ipcRenderer.send('showFileOpenDialog', 'xlsx');
+            ipcRenderer.on('message', onFileDialogOff);
+            ipcRenderer.send('showMessageBox', '겹치는 수정내역이 있습니다. 덮어쓰시겠습니까?', ['취소', '덮어쓰기', '겹치지 않는 것만 추가']);
+        });
+    }
+
+    public upload(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const onFileDialogOff = async (event: IpcRendererEvent, args: any) => {
+                try {
+                    ipcRenderer.off('openFilePath', onFileDialogOff);
+    
+                    if (args && args.length > 0) {
+                        await this.readExcelFile(args[0]);
+                        resolve();
+                    }
+                } catch (e) {
+                    reject(e);
+                }
+            }
+            ipcRenderer.on('openFilePath', onFileDialogOff);
+            ipcRenderer.send('showFileOpenDialog', 'xlsx');
+        })
     }
 
     public update(): Promise<void> {

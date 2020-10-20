@@ -98,10 +98,9 @@ class ExcelAgent {
     private jsonToBookModels(json: any): Array<BookModel> {
         const bookModels: Array<BookModel> = json[0].map((data: any) => this.bookJsonToBookModel(data));
 
-        const map = new Map<number, BookModel>();
+        const map = new Map<string, BookModel>();
         bookModels.forEach((book: BookModel) => map.set(book.순번, book));
 
-        // console.log(json[1]);
         json[1].forEach((data: any) => {
             const idx = data.순번;
             const book: BookModel = map.get(idx);
@@ -111,7 +110,6 @@ class ExcelAgent {
                 });
 
                 Object.keys(data).filter(key => key !== '순번' && key !== '도서명' && key !== '저자명' && key !== '출판사' && key !== '판매상태').forEach((key: string) => {
-                    // console.log(json[1]);
                     const value = (String(data[key]) || '').trim().toUpperCase();
                     if (value === 'O') {
                         book.플랫폼들.set(key, 'O')
@@ -135,13 +133,13 @@ class ExcelAgent {
         json.성인 = this.getValidValue(ConfigDC.getIsAdults(), json.성인);
         json.대여여부 = this.getValidValue(ConfigDC.getIsLendables(), json.대여여부);
         json.판매상태 = this.getValidValue(ConfigDC.getSellStates(), json.판매상태);
-        if (json.발행일) json.발행일 = DateConvertUtil.excelDateToDateString(json.발행일);
+        if (json.발행일) json.발행일 = DateConvertUtil.excelDateToDateString(String(json.발행일));
         if (json.독점종료일) json.독점종료일 = DateConvertUtil.excelDateToDateString(json.독점종료일);
         return json;
     }
 
     private getValidValue(arr: Array<string>, data: any): any {
-        const idx: number = arr.indexOf((data || '').trim());
+        const idx: number = arr.indexOf((String(data) || '').trim());
         return (idx >= 0) ? arr[idx] : arr[0];
     }
 }
